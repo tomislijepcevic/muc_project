@@ -3,8 +3,8 @@
 # ---------------------------
 # | CONFIGURATION VARIABLES |
 # ---------------------------
-TIME_FOR_BROAD_CAPTURE=${1-10}
-TIME_FOR_NARROW_CAPTURE=${2-15}
+BROAD_CAPTURE_DURATION=${1-10}
+NARROW_CAPTURE_DURATION=${2-15}
 FILE_OUI_MAPPING="oui.csv"
 
 # ------------------------
@@ -44,10 +44,9 @@ if [ -z $file_broad_capture ]; then
 fi
 
 /system/xbin/airodump-ng -w broad --output-format csv eth0 2>/dev/null &
-sleep $TIME_FOR_BROAD_CAPTURE
+sleep $BROAD_CAPTURE_DURATION
 killall -INT airodump-ng
 wait
-sleep 2
 
 # Process broad capture
 dividing_line=$(grep -n "^Station" $file_broad_capture | cut -d: -f1)
@@ -75,7 +74,7 @@ cat $file_broad_capture | while read line; do
   i=`expr $i + 1` 
 done
 
-# Sort AP in broad capture by power
+# Sort AP discovered in broad capture by power
 cat $file_tmp > $file_broad_capture
 sort -nr $file_broad_capture > $file_tmp
 cat $file_tmp > $file_broad_capture
@@ -92,7 +91,7 @@ cat $file_broad_capture | while read line; do
   ch=$(col_in_line "$line" 3)
 
   /system/xbin/airodump-ng -w narrow --output-format csv -c $ch --bssid $mac eth0 2>/dev/null &
-  sleep $TIME_FOR_NARROW_CAPTURE
+  sleep $NARROW_CAPTURE_DURATION
   killall -INT airodump-ng
   wait
 
