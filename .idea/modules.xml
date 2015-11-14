@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Project.iml" filepath="$PROJECT_DIR$/Project.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/model_generator/model_generator.iml" filepath="$PROJECT_DIR$/model_generator/model_generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/muc_project.iml" filepath="$PROJECT_DIR$/muc_project.iml" />
     </modules>
   </component>
 </project>
