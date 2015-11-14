@@ -11,7 +11,6 @@ public class BaseDaoGenerator {
 
     public static void main(String[] args) {
         Schema schema = new Schema(1, "muc.project.model");
-
         addEntities(schema);
 
         try {
