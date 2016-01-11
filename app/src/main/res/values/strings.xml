@@ -4,4 +4,5 @@
     <string name="nearby_devices">Nearby devices</string>
     <string name="scanning_status">Scanning status:</string>
     <string name="choose_action">Choose action:</string>
+    <string name="device_details">Device details</string>
 </resources>

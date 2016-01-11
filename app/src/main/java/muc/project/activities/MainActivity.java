@@ -1,8 +1,11 @@
-package muc.project;
+package muc.project.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -12,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import muc.project.R;
+
 public class MainActivity extends ActionBarActivity {
 
     private static final String TAG = "MainActivity";
@@ -20,14 +25,14 @@ public class MainActivity extends ActionBarActivity {
     private static final int AIRODUMP_BROAD_CAPTURE_DURATION = 5;
     private static final int AIRODUMP_NARROW_CAPTURE_DURATION = 10;
     private TextView textView;
-
+    private Button detailsButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         textView = (TextView) findViewById(R.id.textView);
-
+        /*
         try {
             makeNewFile(getAssets().open(OUI_CSV), OUI_CSV);
             File script = makeNewFile(getAssets().open(AIRODUMP_UTIL_SCRIPT), AIRODUMP_UTIL_SCRIPT);
@@ -35,6 +40,16 @@ public class MainActivity extends ActionBarActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
+        detailsButton = (Button) findViewById(R.id.todo_btn); // TODO: Details should be changed to onClick ListView item.
+        detailsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start details activity.
+                Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void execScriptAsRoot(File script) {
