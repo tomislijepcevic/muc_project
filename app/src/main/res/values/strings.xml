@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Project</string>
     <string name="subscribed_devices">Subscribed devices:</string>
-    <string name="nearby_devices">Nearby</string>
+    <string name="nearby_devices">Nearby devices</string>
     <string name="scanning_status">Scanning status:</string>
     <string name="choose_action">Choose action:</string>
 </resources>
