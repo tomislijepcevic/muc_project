@@ -1,4 +1,4 @@
-package muc.project.activities;
+package muc.project.fragments;
 
 
 import com.google.android.gms.maps.SupportMapFragment;

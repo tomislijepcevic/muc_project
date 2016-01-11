@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -23,35 +22,35 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Name:"
+            android:text="@string/name"
             android:textSize="18sp"
             android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Manufacturer:"
+            android:text="@string/manufacturer"
             android:textSize="18sp"
             android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Counter:"
+            android:text="@string/counter"
             android:textSize="18sp"
             android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Last seen:"
+            android:text="@string/last_seen"
             android:textSize="18sp"
             android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Last location:"
+            android:text="@string/last_location"
             android:textSize="18sp"
             android:layout_marginBottom="5dp"/>
 
@@ -66,14 +65,14 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Previous locations"
+            android:text="@string/previous_locations"
             android:textSize="18sp" />
 
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:id="@+id/map"
-            class="muc.project.activities.MapsFragment" />
+            class="muc.project.fragments.MapsFragment" />
 
     </LinearLayout>
 
@@ -82,7 +81,7 @@
         android:layout_width="fill_parent"
         android:layout_weight="1"
         android:layout_height="0px"
-        android:text="(UN)Subscribe"
+        android:text="@string/subscribe"
         android:id="@+id/subscribe_btn" />
 
 </LinearLayout>
