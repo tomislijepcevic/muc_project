@@ -13,4 +13,16 @@
     <string name="counter">Counter</string>
     <string name="last_seen">Last seen</string>
     <string name="last_location">Last location</string>
+    <string name="settings">Settings</string>
+    <string name="scan_now">Scan now</string>
+    <string name="empty_subscribed_list">You are not subscribed to any device</string>
+    <string name="sample_location">Sample location</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="broad_capture_duration">Broad capture duration</string>
+    <string name="narrow_capture_duration">Narrow capture duration</string>
+    <string name="save_settings">Save settings</string>
+    <string name="broadCaptureDuration_error">Broad capture duration should be between 1 and 100</string>
+    <string name="narrowCaptureDuration_error">Narrow capture duration should be between 1 and 100.</string>
+    <string name="settings_updated">Settings updated.</string>
 </resources>

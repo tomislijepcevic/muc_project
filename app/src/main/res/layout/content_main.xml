@@ -48,21 +48,21 @@
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/nearby_devices"
-            android:id="@+id/nearby_btn" />
+            android:text="@string/scan_now"
+            android:id="@+id/scan_btn" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Todo"
-            android:id="@+id/todo_btn" />
+            android:text="@string/settings"
+            android:id="@+id/settings_btn" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Todo"
+            android:text="Go to details (remove later)"
             android:id="@+id/todo2_btn" />
     </LinearLayout>
 
@@ -80,9 +80,17 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/device_list"
+        android:id="@+id/subscribed_listview"
         android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/empty_textview"
+        android:text="@string/empty_subscribed_list"
+        android:layout_below="@id/subscribed_listview"/>
 
 </RelativeLayout>

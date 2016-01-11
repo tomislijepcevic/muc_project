@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -24,14 +26,19 @@ public class MainActivity extends ActionBarActivity {
     private static final String OUI_CSV = "oui.csv";
     private static final int AIRODUMP_BROAD_CAPTURE_DURATION = 5;
     private static final int AIRODUMP_NARROW_CAPTURE_DURATION = 10;
-    private TextView textView;
+
     private Button detailsButton;
+    private Button scanButton;
+    private Button settingsButton;
+    private ListView subscribedListView;
+    private TextView emptyTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initFields();
 
-        textView = (TextView) findViewById(R.id.textView);
         /*
         try {
             makeNewFile(getAssets().open(OUI_CSV), OUI_CSV);
@@ -41,13 +48,45 @@ public class MainActivity extends ActionBarActivity {
             e.printStackTrace();
         }
         */
-        detailsButton = (Button) findViewById(R.id.todo_btn); // TODO: Details should be changed to onClick ListView item.
+
+    }
+
+    private void initFields() {
+        detailsButton = (Button) findViewById(R.id.todo2_btn); // TODO: Details should be changed to onClick ListView item.
         detailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Start details activity.
                 Intent intent = new Intent(MainActivity.this, DetailsActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        scanButton = (Button) findViewById(R.id.scan_btn);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start scanning activity.
+            }
+        });
+
+        settingsButton = (Button) findViewById(R.id.settings_btn);
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start settings activity.
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        subscribedListView = (ListView) findViewById(R.id.subscribed_listview);
+        emptyTextView = (TextView) findViewById(R.id.empty_textview);
+        subscribedListView.setEmptyView(emptyTextView);
+        subscribedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Start details activity.
             }
         });
     }
@@ -65,7 +104,7 @@ public class MainActivity extends ActionBarActivity {
             String line;
             BufferedReader input = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             while ((line = input.readLine()) != null) {
-                textView.setText("result : " + line);
+                //textView.setText("result : " + line);
                 Log.d(TAG, line);
             }
 
