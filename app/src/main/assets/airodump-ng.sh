@@ -43,6 +43,7 @@ if test -e $file_broad_capture; then
   rm $file_broad_capture
 fi
 
+killall airodump-ng 2>/dev/null
 airodump-ng -w broad --output-format csv eth0 2>/dev/null &
 sleep $BROAD_CAPTURE_DURATION
 killall -INT airodump-ng
@@ -89,6 +90,7 @@ cat $file_broad_capture | while read line; do
   mac=$(col_in_line "$line" 2)
   ch=$(col_in_line "$line" 3)
 
+  killall airodump-ng 2>/dev/null
   airodump-ng -w narrow --output-format csv -c $ch --bssid $mac eth0 2>/dev/null &
   sleep $NARROW_CAPTURE_DURATION
   killall -INT airodump-ng

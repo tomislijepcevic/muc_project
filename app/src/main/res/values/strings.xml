@@ -25,4 +25,5 @@
     <string name="broadCaptureDuration_error">Broad capture duration should be between 1 and 100</string>
     <string name="narrowCaptureDuration_error">Narrow capture duration should be between 1 and 100.</string>
     <string name="settings_updated">Settings updated.</string>
+    <string name="title_activity_scanning">Scanning</string>
 </resources>

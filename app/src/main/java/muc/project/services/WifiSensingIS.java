@@ -3,8 +3,7 @@ package muc.project.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,10 +24,10 @@ import muc.project.model.AccessPointDao;
 import muc.project.model.Client;
 import muc.project.model.ClientDao;
 import muc.project.model.Client_AccessPoint;
-import muc.project.model.Client_AccessPointDao;
 import muc.project.model.DaoSession;
 import muc.project.model.History;
-import muc.project.model.HistoryDao;
+
+import static muc.project.helpers.Validation.isMacValid;
 
 
 public class WifiSensingIS extends IntentService implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -105,8 +103,17 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
                 String line;
                 BufferedReader input = new BufferedReader(new InputStreamReader(exec.getInputStream()));
 
-                while ((line = input.readLine()) != null)
-                    onClientDetected(line);
+                while ((line = input.readLine()) != null) {
+                    try {
+                        Client client = onClientDetected(line);
+
+                        Intent localIntent = new Intent(Constants.CLIENT_DETECTED_BROADCAST_RESULT);
+                        localIntent.putExtra("key", client.getId());
+                        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
+                    } catch (ClientMalformedDescriptionException e) {
+                        e.printStackTrace();
+                    }
+                }
 
                 exec.waitFor();
                 Log.d(TAG, "Detection: ENDED");
@@ -119,14 +126,14 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
         }
     }
 
-    private void onClientDetected(String clientProperties) {
+    private Client onClientDetected(String clientProperties) throws ClientMalformedDescriptionException {
         Log.d(TAG, "Client detected with properties: " + clientProperties);
 
         String[] properties = clientProperties.split(",");
 
         if (properties.length != 4) {
             Log.d(TAG, "Client doesn't have all the properties");
-            return;
+            throw new ClientMalformedDescriptionException();
         }
 
         String mac = properties[1];
@@ -136,7 +143,7 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
 
         if (!isMacValid(mac)) {
             Log.d(TAG, "Client has invalid mac");
-            return;
+            throw new ClientMalformedDescriptionException();
         }
 
         DaoSession session = _dbHelper.getSession(true);
@@ -175,12 +182,8 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
                 session.insert(clientAp);
             }
         }
-    }
 
-    private boolean isMacValid(String mac) {
-        Pattern p = Pattern.compile("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
-        Matcher m = p.matcher(mac);
-        return m.find();
+        return client;
     }
 
     private void logStream(InputStream is) throws IOException {
@@ -214,5 +217,8 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
         } else if (key.equals(Constants.AIRODUMP_NARROW_CAPTURE_DURATION)) {
             _narrowCaptureDuration = sharedPreferences.getInt(key, _narrowCaptureDuration);
         }
+    }
+
+    private class ClientMalformedDescriptionException extends Exception {
     }
 }

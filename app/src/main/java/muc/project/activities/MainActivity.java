@@ -42,8 +42,8 @@ public class MainActivity extends ActionBarActivity {
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent wifiSensingServiceIntent = new Intent(getApplicationContext(), WifiSensingIS.class);
-                startService(wifiSensingServiceIntent);
+                Intent intent = new Intent(MainActivity.this, ScanningActivity.class);
+                startActivity(intent);
             }
         });
 

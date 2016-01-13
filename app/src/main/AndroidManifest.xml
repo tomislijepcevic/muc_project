@@ -35,6 +35,10 @@
             android:exported="false" >
         </service>
 
+        <activity
+            android:name=".activities.ScanningActivity"
+            android:label="@string/title_activity_scanning" >
+        </activity>
     </application>
 
 </manifest>

@@ -2,6 +2,9 @@ package muc.project.helpers;
 
 import android.util.Patterns;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by peterus on 21.10.2015.
  */
@@ -33,5 +36,11 @@ public class Validation {
 
     public static boolean isEmailAddress(String str){
         return str != null && str.matches(Patterns.EMAIL_ADDRESS.toString());
+    }
+
+    public static boolean isMacValid(String mac) {
+        Pattern p = Pattern.compile("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
+        Matcher m = p.matcher(mac);
+        return m.find();
     }
 }
