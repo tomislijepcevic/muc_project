@@ -16,16 +16,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.DetailsActivity" android:label="Details"/>
-        <activity android:name=".activities.SettingsActivity" android:label="Settings"/>
+        <activity
+            android:name=".activities.DetailsActivity"
+            android:label="Details" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="Settings" />
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCCm04Nmi8A-5a6buyb7Er6CrfwvBVRe90" />
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <service
+            android:name=".services.WifiSensingIS"
+            android:exported="false" >
+        </service>
+
     </application>
 
 </manifest>

@@ -39,11 +39,11 @@ print_client() {
 # Start broad capture
 file_broad_capture="broad-01.csv"
 
-if [ -z $file_broad_capture ]; then
+if test -e $file_broad_capture; then
   rm $file_broad_capture
 fi
 
-/system/xbin/airodump-ng -w broad --output-format csv eth0 2>/dev/null &
+airodump-ng -w broad --output-format csv eth0 2>/dev/null &
 sleep $BROAD_CAPTURE_DURATION
 killall -INT airodump-ng
 wait
@@ -68,21 +68,20 @@ cat $file_broad_capture | while read line; do
 
     echo $pwr,$mac,$ch >> $file_tmp
   elif [ $i -ge $cl_from_line -a $i -lt $cl_to_line ]; then
-    print_client $line
+    print_client "$line"
   fi
 
-  i=`expr $i + 1` 
+  i=`expr $i + 1`
 done
 
 # Sort AP discovered in broad capture by power
-cat $file_tmp > $file_broad_capture
-sort -nr $file_broad_capture > $file_tmp
-cat $file_tmp > $file_broad_capture
+$file_broad_capture > ble.txt
+sort -nr $file_tmp > $file_broad_capture
 
 # Start narrow capture
 file_narrow_capture="narrow-01.csv"
 
-if [ -z $file_narrow_capture ]; then
+if test -e $file_narrow_capture; then
   rm $file_narrow_capture
 fi
 
@@ -90,7 +89,7 @@ cat $file_broad_capture | while read line; do
   mac=$(col_in_line "$line" 2)
   ch=$(col_in_line "$line" 3)
 
-  /system/xbin/airodump-ng -w narrow --output-format csv -c $ch --bssid $mac eth0 2>/dev/null &
+  airodump-ng -w narrow --output-format csv -c $ch --bssid $mac eth0 2>/dev/null &
   sleep $NARROW_CAPTURE_DURATION
   killall -INT airodump-ng
   wait
@@ -103,14 +102,14 @@ cat $file_broad_capture | while read line; do
 
   cat $file_narrow_capture | while read _line; do
     if [ $i -ge $cl_from_line -a $i -lt $cl_to_line ]; then
-      print_client $_line
+      print_client "$_line"
     fi
 
-    i=`expr $i + 1` 
+    i=`expr $i + 1`
   done
 
   rm $file_narrow_capture
 done
 
-rm $file_tmp
-rm $file_broad_capture
+# rm $file_tmp
+# rm $file_broad_capture
