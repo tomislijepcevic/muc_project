@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import muc.project.ApplicationContext;
 import muc.project.DBHelper;
@@ -107,7 +105,10 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
                     try {
                         Client client = onClientDetected(line);
 
-                        Intent localIntent = new Intent(Constants.CLIENT_DETECTED_BROADCAST_RESULT);
+                        Intent localIntent = new Intent(client.getSubscribed() ?
+                                Constants.SUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT :
+                                Constants.SUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT
+                        );
                         localIntent.putExtra("key", client.getId());
                         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
                     } catch (ClientMalformedDescriptionException e) {
@@ -156,6 +157,7 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
             client = new Client();
             client.setMac(mac);
             client.setManufacturer(manufacturer);
+            client.setSubscribed(false);
             clientDao.insert(client);
         }
 

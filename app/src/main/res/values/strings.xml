@@ -26,4 +26,8 @@
     <string name="narrowCaptureDuration_error">Narrow capture duration should be between 1 and 100.</string>
     <string name="settings_updated">Settings updated.</string>
     <string name="title_activity_scanning">Scanning</string>
+    <string name="scaning_activity_unsubscribe_fragment_title">Subscribed</string>
+    <string name="detected_unsubscribed_clients_fragment_title">Unsubscribed</string>
+    <string name="scanning_activity_subscribe_option">Subscribe</string>
+    <string name="scanning_activity_unsubscribe_option">Unsubscribe</string>
 </resources>
