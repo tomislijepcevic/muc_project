@@ -5,12 +5,13 @@
     <string name="scanning_status">Scanning status:</string>
     <string name="choose_action">Choose action:</string>
     <string name="device_details">Device details</string>
+    <string name="save">Save</string>
     <string name="subscribe">Subscribe</string>
     <string name="unsubscribe">Unsubscribe</string>
     <string name="previous_locations">Previous locations</string>
     <string name="name">Name</string>
     <string name="manufacturer">Manufacturer</string>
-    <string name="counter">Counter</string>
+    <string name="times_seen">Times seen</string>
     <string name="last_seen">Last seen</string>
     <string name="last_location">Last location</string>
     <string name="settings">Settings</string>

@@ -26,9 +26,9 @@ oui_lookup() {
 
 print_client() {
   line=$1
-  mac=$(col_in_line "$line" 1)
-  pwr=$(col_in_line "$line" 4)
-  bssid=$(col_in_line "$line" 6)
+  mac=$(col_in_line "$line" 1 | tr -d ' ')
+  pwr=$(col_in_line "$line" 4 |  tr -d ' ')
+  bssid=$(col_in_line "$line" 6 |  tr -d ' ')
   mac_oui_resolved=$(oui_lookup $mac)
   echo $pwr,$mac,$mac_oui_resolved,$bssid
 }

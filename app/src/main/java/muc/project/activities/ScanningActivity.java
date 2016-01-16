@@ -1,10 +1,10 @@
 package muc.project.activities;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -15,19 +15,15 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
-
-import java.util.ArrayList;
+import android.widget.ListView;
 
 import muc.project.DBHelper;
 import muc.project.R;
+import muc.project.helpers.ClientArrayAdapter;
 import muc.project.helpers.Constants;
 import muc.project.model.Client;
 import muc.project.model.ClientDao;
@@ -39,10 +35,9 @@ public class ScanningActivity extends AppCompatActivity {
     private static final int CONTEXT_MENU_SUBSCRIBE = 0;
     private static final int CONTEXT_MENU_UNSUBSCRIBE = 0;
 
-    private ClientDetectedBroadcastReceiver _broadcastReceiver;
     private ClientDao _clientDao;
-    private ClientArrayAdapter _unsubscribedClientsAdapter;
-    private ClientArrayAdapter _subscribedClientsAdapter;
+    private muc.project.helpers.ClientArrayAdapter _unsubscribedClientsAdapter;
+    private muc.project.helpers.ClientArrayAdapter _subscribedClientsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,9 +57,13 @@ public class ScanningActivity extends AppCompatActivity {
         // This method ensures that tab selection events update the ViewPager and page changes update the selected tab.
         tabLayout.setupWithViewPager(mViewPager);
 
-        _broadcastReceiver = new ClientDetectedBroadcastReceiver();
-        LocalBroadcastManager.getInstance(this).registerReceiver(_broadcastReceiver,
+        SubscribedClientDetectedBroadcastReceiver broadcastReceiver = new SubscribedClientDetectedBroadcastReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver,
                 new IntentFilter(Constants.SUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT));
+
+        UnsubscribedClientDetectedBroadcastReceiver broadcastReceiver2 = new UnsubscribedClientDetectedBroadcastReceiver();
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver2,
+                new IntentFilter(Constants.UNSUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT));
 
         DBHelper dbHelper = new DBHelper(this);
         DaoSession session = dbHelper.getSession(true);
@@ -76,49 +75,33 @@ public class ScanningActivity extends AppCompatActivity {
         startService(wifiSensingServiceIntent);
     }
 
-    class ClientDetectedBroadcastReceiver extends BroadcastReceiver {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Intent wifiSensingServiceIntent = new Intent(getApplicationContext(), WifiSensingIS.class);
+        stopService(wifiSensingServiceIntent);
+    }
+
+    class SubscribedClientDetectedBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            Long key = intent.getLongExtra("key", 0L);
+            Client client = _clientDao.load(intent.getLongExtra("key", 0L));
 
-            if (key != 0l) {
-                Client client = _clientDao.load(key);
-
-                if (client.getSubscribed()) {
-                    _subscribedClientsAdapter.add(client);
-                } else {
-                    _unsubscribedClientsAdapter.add(client);
-                }
-            }
+            if (_subscribedClientsAdapter.getPosition(client) < 0)
+                _subscribedClientsAdapter.add(client);
         }
     }
 
-    static class ClientArrayAdapter extends ArrayAdapter<Client> {
-
-        public ClientArrayAdapter(Context context) {
-            super(context, 0, new ArrayList<Client>());
-        }
+    class UnsubscribedClientDetectedBroadcastReceiver extends BroadcastReceiver {
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            // Get the data item for this _position
-            Client client = getItem(position);
+        public void onReceive(Context context, Intent intent) {
+            Client client = _clientDao.load(intent.getLongExtra("key", 0L));
 
-            // Check if an existing view is being reused, otherwise inflate the view
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_list_item_2, parent, false);
-            }
-
-            TextView firstText = (TextView) convertView.findViewById(android.R.id.text1);
-            TextView secondText = (TextView) convertView.findViewById(android.R.id.text2);
-
-            firstText.setText(client.getName() != null ? client.getName() : client.getMac());
-            firstText.setTextColor(Color.BLACK);
-            secondText.setText(client.getManufacturer());
-            secondText.setTextColor(Color.BLACK);
-
-            return convertView;
+            if (_unsubscribedClientsAdapter.getPosition(client) < 0)
+                _unsubscribedClientsAdapter.add(client);
         }
     }
 
@@ -164,7 +147,7 @@ public class ScanningActivity extends AppCompatActivity {
         }
     }
 
-    public static class SubscribedClientsListFragment extends ListFragment {
+    public static class ClientsListFragment extends ListFragment {
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
@@ -172,6 +155,33 @@ public class ScanningActivity extends AppCompatActivity {
 
             registerForContextMenu(getListView());
         }
+
+        @Override
+        public void onListItemClick(ListView l, View view, int position, long id) {
+            super.onListItemClick(l, view, position, id);
+
+            Intent i = new Intent(getActivity(), DetailsActivity.class);
+            Client client = (Client) getListAdapter().getItem(position);
+            i.putExtra("id", client.getId());
+            i.putExtra("position", position);
+            startActivityForResult(i, 1);
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+            if (requestCode == 1) {
+                if(resultCode == Activity.RESULT_OK) {
+                    int position = data.getIntExtra("position", 0);
+                    ClientArrayAdapter adapter = (ClientArrayAdapter) getListAdapter();
+                    adapter.getItem(position).refresh();
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        }
+    }
+
+    public static class SubscribedClientsListFragment extends ClientsListFragment {
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -182,14 +192,8 @@ public class ScanningActivity extends AppCompatActivity {
         }
     }
 
-    public static class UnsubscribedClientsListFragment extends ListFragment {
+    public static class UnsubscribedClientsListFragment extends ClientsListFragment {
 
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-
-            registerForContextMenu(getListView());
-        }
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {

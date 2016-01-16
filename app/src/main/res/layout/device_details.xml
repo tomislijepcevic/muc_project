@@ -61,7 +61,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/counter"
+                android:text="@string/times_seen"
                 android:textSize="18sp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginRight="10dp"
@@ -144,7 +144,7 @@
         android:layout_width="fill_parent"
         android:layout_weight="1"
         android:layout_height="0px"
-        android:text="@string/subscribe"
-        android:id="@+id/subscribe_btn" />
+        android:text="@string/save"
+        android:id="@+id/save_btn" />
 
 </LinearLayout>
