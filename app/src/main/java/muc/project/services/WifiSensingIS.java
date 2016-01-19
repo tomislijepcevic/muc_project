@@ -165,6 +165,10 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            /*
+            Intent broadcastIntent = new Intent(Constants.SUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT);
+            intent.putExtra("key", 1);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);*/
         }
     }
 

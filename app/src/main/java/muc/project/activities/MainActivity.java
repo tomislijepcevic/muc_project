@@ -16,6 +16,7 @@ import muc.project.R;
 import muc.project.helpers.ClientArrayAdapter;
 import muc.project.model.Client;
 import muc.project.model.DaoSession;
+import muc.project.services.ActivityRecognizerIS;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -26,6 +27,9 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initFields();
+
+        Intent activityRecognizerServiceIntent = new Intent(getApplicationContext(), ActivityRecognizerIS.class);
+        startService(activityRecognizerServiceIntent);
     }
 
     private void initFields() {
