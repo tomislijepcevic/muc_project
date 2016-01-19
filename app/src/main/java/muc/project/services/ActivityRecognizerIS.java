@@ -43,6 +43,8 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
     private ScanningEndedBroadcastReceiver _scanningEndedBroadcastReceiver;
     private ClientDao clientDao;
 
+    private static boolean didRun = false;
+
     public ActivityRecognizerIS() {
         super(TAG);
     }
@@ -53,22 +55,9 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
         buildGoogleApiClient();
         mGoogleApiClient.connect();
 
-        // Add test client
-        Client client = new Client();
-        client.setName("Janez");
-        client.setManufacturer("Apple");
-        client.setMac("58:b0:35:77:6a:ea");
-        client.setSubscribed(true);
-        client.setCounter(50);
-
-        History history = new History();
-        history.setClient(client);
-        history.setTimestamp(new Date());
-
         _dbHelper = new DBHelper(ApplicationContext.getInstance());
         DaoSession session = _dbHelper.getSession(true);
         clientDao = session.getClientDao();
-        session.insertOrReplace(client);
         Log.i(TAG, "Actvity recognizer launched");
 
     }
@@ -90,6 +79,7 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.i(TAG, "Got activity intent");
+
         if(intent != null) {
 
             // Get most probable activity
@@ -101,7 +91,9 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
                 String activityString = getActivityString(activityType);
 
                 // Check if activity is STILL
-                if (activityType == DetectedActivity.STILL) {
+                if (activityType == DetectedActivity.STILL && !didRun) {
+                    didRun = true;
+                    
                     Log.i(TAG, "Device is STILL");
 
                     LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
@@ -111,10 +103,10 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
                     lbm.registerReceiver(_clientDetectedBroadcastReceiver,
                             new IntentFilter(Constants.SUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT));
 
-                    /* // Register broadcast receiver and show notification on received broadcast
+                    // Register broadcast receiver and show notification on received broadcast
                     _strangerDetectedBroadcastReceiver = new UnsubscribedClientDetectedBroadcastReceiver();
                     lbm.registerReceiver(_strangerDetectedBroadcastReceiver,
-                            new IntentFilter(Constants.UNSUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT));*/
+                    new IntentFilter(Constants.UNSUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT));
 
                     // Register broadcast receiver and unregister both broadcast receivers on receiver broadcast
                     _scanningEndedBroadcastReceiver = new ScanningEndedBroadcastReceiver();
@@ -206,12 +198,9 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
             // Build notification
             Log.i(TAG, "Client detected broadcast received 1111111111111111111111111111111111111111111111111111111111111111");
 
-            int clientId = intent.getIntExtra("key", -1);
-
-            Client client = clientDao.queryRaw("Where T._id = ?", Integer.toString(clientId)).get(0);
-
+            Client client = clientDao.load(intent.getLongExtra("key", 0L));
             Intent detailIntent = new Intent(getApplicationContext(), DetailsActivity.class);
-            detailIntent.putExtra("id", clientId);
+            detailIntent.putExtra("id", client.getId());
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                     detailIntent, 0);
 
@@ -229,11 +218,10 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
             if(intent != null) {
 
                 Log.i(TAG, "Stranger detected broadcast received 1111111111111111111111111111111111111111111111111111111111111111");
-                int clientId = intent.getIntExtra("key", -1);
-                Client client = clientDao.queryRaw("Where T._id = ?", Integer.toString(clientId)).get(0);
 
+                Client client = clientDao.load(intent.getLongExtra("key", 0L));
                 Intent detailIntent = new Intent(getApplicationContext(), DetailsActivity.class);
-                detailIntent.putExtra("id", clientId);
+                detailIntent.putExtra("id", client.getId());
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                         detailIntent, 0);
 
@@ -261,6 +249,7 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
                 .setSmallIcon(R.drawable.notification_icon)
                 .setContentTitle(title)
                 .setContentText(message)
+                .setContentIntent(pendingIntent)
                 .setCategory(Notification.CATEGORY_SOCIAL)
                 .setPriority(1)
                 .setAutoCancel(true)
@@ -269,6 +258,7 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(10, notification);
+
         Log.i(TAG, "Notification showed");
     }
 }
