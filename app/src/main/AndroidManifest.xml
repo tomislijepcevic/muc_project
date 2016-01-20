@@ -43,14 +43,23 @@
             android:value="@integer/google_play_services_version" />
 
         <service
-            android:name=".services.ActivityRecognizerIS"
-            android:exported="false">
-        </service>
-
-        <service
             android:name=".services.WifiSensingIS"
             android:exported="false" >
         </service>
+
+        <service android:name=".services.ActivityService"
+            android:exported="false">
+        </service>
+
+        <service android:name=".services.ActivityIntentService"
+            android:exported="false">
+        </service>
+
+        <receiver android:name=".services.SensingAlarmReceiver">
+            <intent-filter>
+                <action android:name="muc.project.alarm.SensingAlarm" />
+            </intent-filter>
+        </receiver>
 
     </application>
 
