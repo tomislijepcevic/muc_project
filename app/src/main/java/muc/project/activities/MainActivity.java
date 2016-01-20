@@ -28,8 +28,8 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         initFields();
 
-        Intent activityRecognizerServiceIntent = new Intent(getApplicationContext(), ActivityRecognizerIS.class);
-        startService(activityRecognizerServiceIntent);
+//        Intent activityRecognizerServiceIntent = new Intent(getApplicationContext(), ActivityRecognizerIS.class);
+//        startService(activityRecognizerServiceIntent);
     }
 
     private void initFields() {
@@ -65,6 +65,8 @@ public class MainActivity extends ActionBarActivity {
         for (Client client : daoSession.queryRaw(Client.class, "Where T.subscribed = 1")) {
             _subscribedListAdapter.add(client);
         }
+
+        daoSession.getDatabase().close();
 
         subscribedListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

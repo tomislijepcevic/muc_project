@@ -37,8 +37,8 @@ import muc.project.model.History;
 import static muc.project.helpers.Validation.isMacValid;
 
 
-public class WifiSensingIS extends IntentService implements SharedPreferences.OnSharedPreferenceChangeListener,
-        GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class WifiSensingIS extends IntentService implements GoogleApiClient.ConnectionCallbacks,
+        LocationListener {
 
     private static final String TAG = "WifiSensingIS";
     private static final String UTIL_SCRIPT = "airodump-ng.sh";
@@ -46,8 +46,6 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
 
     private DBHelper _dbHelper;
     private SharedPreferences _sharedPreferences;
-    private int _broadCaptureDuration = 5;
-    private int _narrowCaptureDuration = 5;
     private File _utilScript;
     private File _ouiCsv;
     private String _commandToExecute;
@@ -66,13 +64,6 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
 
         _dbHelper = new DBHelper(ApplicationContext.getInstance());
         _sharedPreferences = getSharedPreferences(Constants.SETTINGS_PREFS, MODE_PRIVATE);
-        _sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-        _broadCaptureDuration = _sharedPreferences.getInt(
-                Constants.AIRODUMP_BROAD_CAPTURE_DURATION,
-                _broadCaptureDuration);
-        _narrowCaptureDuration = _sharedPreferences.getInt(
-                Constants.AIRODUMP_BROAD_CAPTURE_DURATION,
-                _narrowCaptureDuration);
         _utilScript = new File (getFilesDir(), UTIL_SCRIPT);
         _ouiCsv = new File (getFilesDir(), OUI_CSV);
         _commandToExecute = "mount -o remount,rw /system && sh " + _utilScript.getAbsolutePath();
@@ -126,10 +117,13 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
             try {
                 ensureFilesExists();
                 _googleApiClient.connect();
+                int broadCaptureDuration = _sharedPreferences.getInt(Constants.AIRODUMP_BROAD_CAPTURE_DURATION, 10);
+                int narrowCaptureDuration = _sharedPreferences.getInt(Constants.AIRODUMP_NARROW_CAPTURE_DURATION, 15);
 
                 ProcessBuilder processBuilder = new ProcessBuilder();
                 processBuilder.redirectErrorStream(true);
                 processBuilder.directory(_utilScript.getParentFile());
+                _commandToExecute += String.format(" %d %d", broadCaptureDuration, narrowCaptureDuration);
                 processBuilder.command(new String[]{"su", "-c", _commandToExecute});
 
                 Log.d(TAG, "Detection: STARTED");
@@ -265,15 +259,6 @@ public class WifiSensingIS extends IntentService implements SharedPreferences.On
 
         is.close();
         os.close();
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(Constants.AIRODUMP_BROAD_CAPTURE_DURATION)) {
-            _broadCaptureDuration = sharedPreferences.getInt(key, _broadCaptureDuration);
-        } else if (key.equals(Constants.AIRODUMP_NARROW_CAPTURE_DURATION)) {
-            _narrowCaptureDuration = sharedPreferences.getInt(key, _narrowCaptureDuration);
-        }
     }
 
     protected void startLocationUpdates() {

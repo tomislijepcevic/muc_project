@@ -18,9 +18,7 @@ import muc.project.helpers.Validation;
  * Created by peterus on 11.1.2016.
  */
 public class SettingsActivity extends ActionBarActivity {
-    private RadioGroup locationGroup;
-    private RadioButton offLocationRadio;
-    private RadioButton onLocationRadio;
+
     private EditText broadCaptureDuration;
     private EditText narrowCaptureDuration;
     private Button saveSettingsButton;
@@ -30,14 +28,12 @@ public class SettingsActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.settings);
 
         initFields();
     }
 
     private void initFields(){
-        locationGroup = (RadioGroup) findViewById(R.id.location_radioGroup);
-        offLocationRadio = (RadioButton) findViewById(R.id.off_radio);
-        onLocationRadio = (RadioButton) findViewById(R.id.on_radio);
         broadCaptureDuration = (EditText) findViewById(R.id.broadCaptureDuration_exitText);
         narrowCaptureDuration = (EditText) findViewById(R.id.narrowCaptureDuration_editText);
         saveSettingsButton = (Button) findViewById(R.id.save_settings_button);
@@ -46,15 +42,10 @@ public class SettingsActivity extends ActionBarActivity {
         SharedPreferences settings = getSharedPreferences(Constants.SETTINGS_PREFS, MODE_PRIVATE);
         int broadCaptureDurationInt = settings.getInt(Constants.AIRODUMP_BROAD_CAPTURE_DURATION, 10);
         int narrowCaptureDurationInt = settings.getInt(Constants.AIRODUMP_NARROW_CAPTURE_DURATION, 10);
-        boolean locationSamplingEnabled = settings.getBoolean(Constants.LOCATION_SAMPLING_SETTING, true);
 
         // Update fields.
-        broadCaptureDuration.setText(broadCaptureDurationInt);
-        narrowCaptureDuration.setText(narrowCaptureDurationInt);
-        if (locationSamplingEnabled)
-            onLocationRadio.setSelected(true);
-        else
-            offLocationRadio.setSelected(true);
+        broadCaptureDuration.setText("" + broadCaptureDurationInt);
+        narrowCaptureDuration.setText("" + narrowCaptureDurationInt);
 
         // Setup listeners.
         saveSettingsButton.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +59,6 @@ public class SettingsActivity extends ActionBarActivity {
     private void onClickRegisterButton() {
         formErrors = false;
 
-        int locationSamplingId = locationGroup.getCheckedRadioButtonId();
         String broadCaptureDurationText = broadCaptureDuration.getText().toString();
         String narrowCaptureDurationText = narrowCaptureDuration.getText().toString();
 
@@ -90,12 +80,9 @@ public class SettingsActivity extends ActionBarActivity {
 
             settingsEditor.putInt(Constants.AIRODUMP_BROAD_CAPTURE_DURATION, Integer.parseInt(broadCaptureDurationText));
             settingsEditor.putInt(Constants.AIRODUMP_NARROW_CAPTURE_DURATION, Integer.parseInt(narrowCaptureDurationText));
-            boolean locationSampling = locationSamplingId == R.id.on_radio;
-            settingsEditor.putBoolean(Constants.LOCATION_SAMPLING_SETTING, locationSampling);
 
-            settingsEditor.apply();
-
-            Toast.makeText(this, R.string.settings_updated, Toast.LENGTH_SHORT).show();
+            settingsEditor.commit();
+            finish();
         }
     }
 }

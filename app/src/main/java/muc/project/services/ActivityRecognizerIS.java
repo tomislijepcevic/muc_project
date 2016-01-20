@@ -93,7 +93,7 @@ public class ActivityRecognizerIS extends IntentService implements GoogleApiClie
                 // Check if activity is STILL
                 if (activityType == DetectedActivity.STILL && !didRun) {
                     didRun = true;
-                    
+
                     Log.i(TAG, "Device is STILL");
 
                     LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(this);
