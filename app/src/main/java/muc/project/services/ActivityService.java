@@ -198,7 +198,7 @@ public class ActivityService extends Service implements GoogleApiClient.Connecti
         public void onReceive(Context context, Intent intent) {
             LocalBroadcastManager lbm = LocalBroadcastManager.getInstance(getApplicationContext());
             lbm.unregisterReceiver(_clientDetectedBroadcastReceiver);
-            lbm.unregisterReceiver(_strangerDetectedBroadcastReceiver);
+//            lbm.unregisterReceiver(_strangerDetectedBroadcastReceiver);
             lbm.unregisterReceiver(_scanningEndedBroadcastReceiver);
         }
     }
@@ -256,9 +256,9 @@ public class ActivityService extends Service implements GoogleApiClient.Connecti
                             new IntentFilter(Constants.SUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT));
 
                     // Register broadcast receiver and show notification on received broadcast
-                    _strangerDetectedBroadcastReceiver = new UnsubscribedClientDetectedBroadcastReceiver();
-                    lbm.registerReceiver(_strangerDetectedBroadcastReceiver,
-                            new IntentFilter(Constants.UNSUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT));
+//                    _strangerDetectedBroadcastReceiver = new UnsubscribedClientDetectedBroadcastReceiver();
+//                    lbm.registerReceiver(_strangerDetectedBroadcastReceiver,
+//                            new IntentFilter(Constants.UNSUBSCRIBED_CLIENT_DETECTED_BROADCAST_RESULT));
 
                     // Register broadcast receiver and unregister both broadcast receivers on receiver broadcast
                     _scanningEndedBroadcastReceiver = new ScanningEndedBroadcastReceiver();

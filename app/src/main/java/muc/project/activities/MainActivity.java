@@ -3,7 +3,6 @@ package muc.project.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -37,7 +36,6 @@ public class MainActivity extends ActionBarActivity {
         Button settingsButton = (Button) findViewById(R.id.settings_btn);
         ListView subscribedListView = (ListView) findViewById(R.id.subscribed_listview);
         TextView emptyTextView = (TextView) findViewById(R.id.empty_textview);
-        TextView scanStatusView = (TextView) findViewById(R.id.scan_status);
 
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
